@@ -40,11 +40,14 @@ All the text on the site lives in `src/content/`. You shouldn't need to touch an
 | `skills.ts` | Skill groups, plus which skills link to evidence elsewhere on the page |
 | `systems.ts` | The architecture diagram's components and their descriptions |
 | `principles.ts` | The four engineering principles |
+| `site.ts` | Search and sharing: page title, description, social preview image and topics for Google |
 
 A few things happen automatically:
 
 - A project with a `result.value` (for example `46%`) gets the layout that leads with that number. Other projects alternate between two layouts.
 - A skill is shown in cyan and becomes clickable when it matches a pattern on a project, or when it has an entry in `skillEvidence` in `skills.ts`. Anything else is listed as plain text.
+- The meta tags, the structured data Google reads, and `sitemap.xml` are all generated from these files at build time, so they stay in step with the page.
+- The social preview image is `public/og-image.jpg` (1200×630). If you replace it, keep that size.
 - After any edit, run `npm run build` to make sure everything still type-checks.
 
 ## Project structure

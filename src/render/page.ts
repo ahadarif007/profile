@@ -56,7 +56,7 @@ function hero(): Raw {
   <div class="hero__core" data-core data-boot aria-hidden="true">${raw(coreSvg())}</div>
   <div class="hero__inner wrap">
     <p class="hero__meta label" data-boot>
-      <span>${profile.roles.join(' / ')}</span>
+      <span>${profile.name} / ${profile.roles.join(' / ')}</span>
       <span class="hero__meta-loc">${profile.location}</span>
     </p>
     <h1 class="hero__title" id="hero-title" data-boot>
