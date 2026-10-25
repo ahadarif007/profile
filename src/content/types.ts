@@ -85,3 +85,18 @@ export interface Principle {
   title: string;
   body: string;
 }
+
+/** The small animated avatar in the corner of the page. */
+export interface Buddy {
+  /** Accessible name of the avatar button. */
+  label: string;
+  hideLabel: string;
+  /** First thing it says after the page loads. */
+  hello: string;
+  /** Said in turn on each click. */
+  lines: string[];
+  /** Said once when the contact section comes into view. */
+  contact: string;
+  /** Said when it wakes up after dozing off. */
+  wake: string;
+}

@@ -18,6 +18,7 @@ Where the project stands, what was decided and why, and what is still open. Read
 6. **Deploy:** GitHub Actions workflow to Pages; README rewritten.
 7. **SEO:** generated title, description, Open Graph and Twitter tags, JSON-LD (Person, ProfilePage, WebSite, ScholarlyArticle), sitemap, social preview image and icons.
 8. **Content revisions:** two rounds of written feedback applied only where they held up against the owner's latest CV and the paper's publisher record.
+9. **Corner avatar:** a small 3D toon version of the owner, modelled on their illustrated portrait. It looks at the pointer, blinks, leans on fast scrolls, waves and talks when clicked, says hello at the contact section and dozes off after 25 seconds idle. It only appears once nothing readable is behind it, ducks while text passes under it, and can be hidden for the session. Reduced motion, Save-Data and no WebGL get a still crop of the portrait instead.
 
 ## Decisions to keep (do not undo without asking the owner)
 
@@ -48,6 +49,7 @@ Optional clean-up:
 
 Not yet verified:
 10. Safari, real phones and tablets, `prefers-reduced-motion` in a real browser, Lighthouse or performance profiling on real hardware.
+11. The avatar's motion in a visible browser window: it was checked from rendered frames and DOM measurements, since the in-app pane was hidden during testing.
 
 ## Known limitations
 

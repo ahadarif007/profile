@@ -1,0 +1,261 @@
+/* ---------- Corner avatar (src/ui/buddy.ts); only shown when scripts run ---------- */
+
+.buddy {
+  position: fixed;
+  z-index: 45;
+  right: 48px;
+  bottom: 14px;
+  width: 128px;
+  height: 160px;
+  pointer-events: none;
+  opacity: 0;
+  translate: 0 28px;
+  scale: 0.85;
+  transform-origin: 50% 100%;
+  transition:
+    opacity 0.5s var(--ease-out),
+    translate 0.7s var(--ease-out),
+    scale 0.7s var(--ease-out);
+}
+
+.buddy[hidden] {
+  display: none;
+}
+
+/* Laid out but invisible and unclickable until it pops in. */
+.buddy:not(.is-in) {
+  visibility: hidden;
+}
+
+.buddy.is-in {
+  opacity: 1;
+  translate: 0 0;
+  scale: 1;
+}
+
+.buddy__hit {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 45% 45% 35% 35%;
+  background: none;
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.buddy__hit:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+/* Ducking: sinks below the bottom edge so only the top of the head shows. Hover, focus or a click brings it up. */
+.buddy__hit,
+.buddy__zzz {
+  transition: translate 0.45s var(--ease-out);
+}
+
+.buddy.is-peeking:not(.is-up, :hover, :focus-within) :is(.buddy__hit, .buddy__zzz) {
+  translate: 0 55%;
+}
+
+.buddy.is-peeking:not(.is-up, :hover, :focus-within) .buddy__close {
+  visibility: hidden;
+}
+
+.buddy.is-peeking:not(.is-up, :hover, :focus-within) .buddy__say {
+  bottom: 40%;
+}
+
+.buddy__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.buddy__still {
+  display: none;
+}
+
+/* Still version: the original portrait in a small round badge. */
+.buddy--still {
+  width: 72px;
+  height: 72px;
+}
+
+.buddy--still .buddy__hit {
+  border-radius: 50%;
+}
+
+.buddy--still .buddy__still {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow:
+    0 0 0 4px rgb(var(--cyan-rgb) / 0.08),
+    0 10px 30px rgb(0 0 0 / 0.45);
+}
+
+/* Speech bubble, up and to the left of the avatar. */
+.buddy__say {
+  position: absolute;
+  right: 72%;
+  bottom: 86%;
+  width: max-content;
+  max-width: min(240px, 62vw);
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 16px 16px 4px 16px;
+  background: rgb(8 12 18 / 0.92);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--ink);
+  font-size: var(--fs-small);
+  line-height: 1.4;
+  pointer-events: none;
+  opacity: 0;
+  translate: 8px 6px;
+  scale: 0.92;
+  transform-origin: 100% 100%;
+  transition:
+    opacity 0.25s var(--ease-out),
+    translate 0.35s var(--ease-out),
+    scale 0.35s var(--ease-out);
+}
+
+.buddy.is-saying .buddy__say {
+  opacity: 1;
+  translate: 0 0;
+  scale: 1;
+}
+
+.buddy--still .buddy__say {
+  right: 84%;
+  bottom: 84%;
+}
+
+/* Dozing: little z's drift up from the head. */
+.buddy__zzz {
+  position: absolute;
+  top: 8%;
+  right: 12%;
+  display: none;
+  font-family: var(--f-mono);
+  font-weight: 600;
+  color: var(--cyan);
+  pointer-events: none;
+}
+
+.buddy.is-asleep .buddy__zzz {
+  display: block;
+}
+
+.buddy__zzz span {
+  position: absolute;
+  opacity: 0;
+  animation: buddy-z 3s linear infinite;
+}
+
+.buddy__zzz span:nth-child(2) {
+  font-size: 1.15em;
+  animation-delay: 1s;
+}
+
+.buddy__zzz span:nth-child(3) {
+  font-size: 1.35em;
+  animation-delay: 2s;
+}
+
+@keyframes buddy-z {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    translate: 18px -34px;
+  }
+}
+
+.buddy__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--panel);
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: auto;
+  opacity: 0;
+  transition: opacity 0.2s var(--ease-out);
+}
+
+.buddy:hover .buddy__close,
+.buddy:focus-within .buddy__close {
+  opacity: 1;
+}
+
+.buddy--still .buddy__close {
+  top: -8px;
+  right: -8px;
+}
+
+@media (hover: none) {
+  .buddy__close {
+    opacity: 0.85;
+  }
+}
+
+@media (max-width: 760px) {
+  .buddy {
+    right: 8px;
+    bottom: 8px;
+    width: 88px;
+    height: 110px;
+  }
+
+  .buddy--still {
+    width: 56px;
+    height: 56px;
+  }
+
+  .buddy__close {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .buddy,
+  .buddy__say,
+  .buddy__hit,
+  .buddy__zzz {
+    transition: none;
+  }
+
+  .buddy__zzz span {
+    animation: none;
+  }
+}
+
+@media print {
+  .buddy {
+    display: none;
+  }
+}

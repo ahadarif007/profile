@@ -1,3 +1,4 @@
+import { buddy } from '../content/buddy';
 import { education, profile, recognition, timeline } from '../content/profile';
 import { principles } from '../content/principles';
 import { projects } from '../content/projects';
@@ -377,6 +378,12 @@ export function renderPage(): string {
 <div class="atmos" aria-hidden="true"><div class="atmos__glow"></div><div class="atmos__grain"></div></div>
 ${nav()}
 <div class="rail" aria-hidden="true" data-rail><span class="rail__fill" data-rail-fill></span><span class="rail__label" data-rail-label></span></div>
+<div class="buddy" data-buddy hidden>
+  <p class="buddy__say" data-buddy-say aria-hidden="true"></p>
+  <button class="buddy__hit" type="button" data-buddy-hit aria-label="${buddy.label}"><img class="buddy__still" data-buddy-still alt="" width="112" height="112" decoding="async"></button>
+  <span class="buddy__zzz" aria-hidden="true"><span>z</span><span>z</span><span>z</span></span>
+  <button class="buddy__close" type="button" data-buddy-close aria-label="${buddy.hideLabel}"><span aria-hidden="true">×</span></button>
+</div>
 <main id="main">
   ${hero()}
   ${manifesto()}

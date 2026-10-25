@@ -43,6 +43,7 @@ npm run preview
 | Motion | `src/motion/engine.ts` (setup, Lenis, matchMedia), `primitives.ts` (shared helpers), `scenes/*.ts` (one per section) | Scenes registered in `src/main.ts` |
 | WebGL | `src/gl/stage.ts`, driven by `src/motion/scenes/core.ts` | Geometry shared with the SVG poster via `src/core/geometry.ts` |
 | Small UI | `src/ui/nav.ts`, `architecture.ts`, `arsenal.ts`, `copy.ts` | Independent of motion; must work with reduced motion |
+| Corner avatar | `src/ui/buddy.ts` (behaviour), `src/gl/buddy.ts` (3D toon model), `src/styles/buddy.css`, lines in `src/content/buddy.ts`, still image `public/avatar.webp` | Hidden without JS; still portrait for reduced motion, Save-Data or no WebGL; ducks down while text is behind it |
 | Static files | `public/` (favicons, `og-image.jpg`) | Copied as-is to `dist/` |
 | Deploy | `.github/workflows/deploy.yml` | Lint, build, publish `dist/` to Pages on push to `main` |
 
