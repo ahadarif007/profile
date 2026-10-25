@@ -9,7 +9,10 @@ export interface Profile {
   roles: string[];
   location: string;
   availability: string;
+  /** The big hero title, one entry per line. */
   heroLines: string[];
+  /** Short line under the title; its last word carries the cyan accent. */
+  heroTagline: string;
   heroIntro: string;
   manifesto: [string, string];
   manifestoBody: string;
@@ -58,7 +61,7 @@ export interface Publication {
 }
 
 export interface FeaturedPaper extends Publication {
-  /** Plain reference line, as listed by the publisher (no author list on the site). */
+  /** Full reference line, checked against the publisher record. */
   reference: string;
   facts: { value: string; label: string }[];
   pipeline: string[];

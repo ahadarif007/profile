@@ -56,12 +56,13 @@ function hero(): Raw {
   <div class="hero__core" data-core data-boot aria-hidden="true">${raw(coreSvg())}</div>
   <div class="hero__inner wrap">
     <p class="hero__meta label" data-boot>
-      <span>${profile.name} / ${profile.roles.join(' / ')}</span>
+      <span>${profile.roles.join(' / ')}</span>
       <span class="hero__meta-loc">${profile.location}</span>
     </p>
     <h1 class="hero__title" id="hero-title" data-boot>
-      ${profile.heroLines.map((line, i, all) => html`<span class="hero__line hero__line--${i + 1}"><span class="hero__line-i">${i === all.length - 1 ? accentLast(line) : line}</span></span>`)}
+      ${profile.heroLines.map((line, i) => html`<span class="hero__line hero__line--${i + 1}"><span class="hero__line-i">${line}</span></span> `)}
     </h1>
+    <p class="hero__tagline" data-boot>${accentLast(profile.heroTagline)}</p>
     <div class="hero__foot" data-boot>
       <p class="hero__intro">${profile.heroIntro}</p>
       <div class="hero__actions">

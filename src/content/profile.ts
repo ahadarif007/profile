@@ -3,15 +3,16 @@ import type { Education, Profile, TimelineEntry } from './types';
 export const profile: Profile = {
   name: 'Abdul Ahad',
   brand: 'AHAD.SYS',
-  roles: ['Software Engineer', 'AI Researcher', 'Systems Thinker'],
+  roles: ['Software Engineer', 'Machine Learning Researcher', 'MSc in Computing'],
   location: 'Dublin, Ireland',
   availability: 'Open to engineering roles',
-  heroLines: ['I build', 'systems', 'that think.'],
+  heroLines: ['Abdul', 'Ahad'],
+  heroTagline: 'I build systems that think.',
   heroIntro:
-    'I’m a software engineer who has spent five years building event-sourced systems for enterprise teams. I also work on deep learning research (published at IEEE ICCIT 2023), and I’m now doing an MSc in Computing in Ireland.',
+    'Software engineer with more than five years at BRAC IT, where I went from trainee to senior engineer on Java and Spring Boot systems. I co-authored a deep learning paper at IEEE ICCIT 2023 and I’m now doing an MSc in Computing at ATU.',
   manifesto: ['Engineered with precision.', 'Questioned with science.'],
   manifestoBody:
-    'I spent more than five years building enterprise systems at BRAC IT in Dhaka: event-sourced platforms, idempotent data pipelines and shared frameworks used across services. Now I’m doing an MSc in Computing at Atlantic Technological University and bringing the same care to machine learning research.',
+    'At BRAC IT I worked on financial and operational systems: event-sourced platforms, idempotent data pipelines and shared Spring Boot components used across services. As a senior engineer I reviewed architecture and code, tuned performance, mentored engineers and worked through solutions with business teams.',
   email: 'ahadarif555@gmail.com',
   links: [
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/abdul-ahad-64aa161a6/' },
@@ -20,14 +21,13 @@ export const profile: Profile = {
   ],
 };
 
-// TODO(ahad): confirm BRAC IT dates. The CV lists Senior SE "Jan 2024 – Present"
-// and SE "May 2021 – June 2026", which overlap. Assumed values below.
+// Dates follow the 2026 CV.
 export const timeline: TimelineEntry[] = [
-  { start: 'Feb 2020', end: 'Apr 2020', title: 'Teaching Assistant (Intern)', org: 'American International University Bangladesh', kind: 'teaching' },
+  { start: 'Feb 2020', end: 'Apr 2020', title: 'Teaching Assistant (Intern)', org: 'American International University-Bangladesh', kind: 'teaching' },
   { start: 'Oct 2020', end: 'Feb 2021', title: 'Java Development Trainee', org: 'Fast Track Future Leader', kind: 'work' },
-  { start: 'Feb 2021', end: 'May 2021', title: 'Java Development Intern', org: 'BRAC IT Services', kind: 'work' },
-  { start: 'May 2021', end: 'Jan 2024', title: 'Software Engineer', org: 'BRAC IT Services', kind: 'work' },
-  { start: 'Jan 2024', end: 'Jun 2026', title: 'Senior Software Engineer', org: 'BRAC IT Services', kind: 'work' },
+  { start: 'Feb 2021', end: 'Apr 2021', title: 'Java Development Intern', org: 'BRAC IT Services Limited', kind: 'work' },
+  { start: 'May 2021', end: 'Dec 2023', title: 'Software Engineer', org: 'BRAC IT Services Limited', kind: 'work' },
+  { start: 'Jan 2024', end: 'Jul 2026', title: 'Senior Software Engineer', org: 'BRAC IT Services Limited', kind: 'work' },
   { start: 'Jan 2026', end: 'Feb 2027', title: 'MSc in Computing', org: 'Atlantic Technological University', kind: 'study' },
 ];
 
@@ -36,25 +36,23 @@ export const education: Education[] = [
     degree: 'MSc in Computing',
     institution: 'Atlantic Technological University',
     place: 'Galway, Ireland',
-    period: 'Jan 2026 – Feb 2027',
+    period: 'Jan 2026 – Feb 2027 (expected)',
     result: 'In progress',
   },
   {
     degree: 'BSc in Computer Science and Engineering',
-    institution: 'American International University Bangladesh',
+    institution: 'American International University-Bangladesh',
     place: 'Dhaka, Bangladesh',
     period: 'Graduated Jul 2020',
     result: 'CGPA 3.45 / 4.00',
   },
 ];
 
+// Only items that can be backed up; add a year and issuer to each when you have them.
 export const recognition: string[] = [
-  'Awarded for leading BRAC IT’s first successful CMMI implementation in the SDLC',
-  'Led development and delivery of five ERP modules',
-  'Intel Edge AI Scholarship (Udacity)',
-  'Commonwealth Scholarship (Coursera)',
-  '500+ problems solved on online judges',
-  'Programming tech blogger on Medium',
+  'Contributed to BRAC IT’s first successful CMMI implementation for its software development process',
+  'Led the development and delivery of five ERP modules',
+  'Intel Edge AI Scholarship, Udacity',
   'Second place, AIUB project showcase',
-  '15+ undergraduate projects · 20+ Coursera courses',
+  'More than 500 algorithmic problems solved on online judges',
 ];

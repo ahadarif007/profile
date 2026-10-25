@@ -23,7 +23,8 @@ export const boot: Scene = (env) => {
   const title = q('.hero__title', hero);
   const lines = qa('.hero__line', hero);
   const lineInners = qa('.hero__line-i', hero);
-  const accent = q('.hero__title .accent', hero);
+  const tagline = q('.hero__tagline', hero);
+  const accent = q('.hero__tagline .accent', hero);
   const foot = q('.hero__foot', hero);
   const intro = q('.hero__intro', hero);
   const actions = q('.hero__actions', hero);
@@ -59,7 +60,7 @@ export const boot: Scene = (env) => {
       .to(title, { opacity: 0, duration: 0.65 }, 0.35)
       .to(grid, { backgroundPositionY: '+=216px', opacity: 0.4 }, 0)
       .to(horizon, { opacity: 0, scaleX: 1.4 }, 0)
-      .to([meta, foot], { y: -80, opacity: 0 }, 0);
+      .to([meta, tagline, foot], { y: -80, opacity: 0 }, 0);
 
   /* ---- Opening sequence (plays once per page load) ---- */
 
@@ -87,6 +88,7 @@ export const boot: Scene = (env) => {
       .set(title, { opacity: 1 }, 0.4)
       .fromTo(lineInners, { yPercent: 120 }, { yPercent: 0, duration: 1.3, stagger: 0.1 }, 0.4)
       .fromTo(meta, { opacity: 0, letterSpacing: '0.4em' }, { opacity: 1, letterSpacing: '0.14em', duration: 1.4, clearProps: 'letterSpacing' }, 0.6)
+      .fromTo(tagline, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 1.2 }, 0.85)
       .fromTo(accent, { color: '#eef3f8', textShadow: '0 0 0em rgb(57 230 255 / 0)' }, { color: cyan, textShadow: '0 0 0.6em rgb(57 230 255 / 0.35)', duration: 1.1, ease: EASE.wipe, clearProps: 'color,textShadow' }, 1.05)
       .fromTo(foot, { opacity: 1, clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.4, ease: EASE.wipe, clearProps: 'clipPath' }, 0.95)
       .from(introSplit?.lines ?? [], { yPercent: 110, duration: 1.1, stagger: 0.08 }, 1.15)

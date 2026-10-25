@@ -4,12 +4,12 @@
  */
 export const site = {
   url: 'https://ahadarif007.github.io/profile/',
-  title: 'Abdul Ahad | Software Engineer and AI Researcher',
+  title: 'Abdul Ahad | Software Engineer and ML Researcher',
   description:
-    'Abdul Ahad is a software engineer and AI researcher in Dublin: event-sourced enterprise systems, an IEEE ICCIT 2023 paper and an MSc in Computing.',
+    'Abdul Ahad is a software engineer and machine learning researcher in Dublin: Java systems at BRAC IT, an IEEE ICCIT 2023 paper, and an MSc in Computing.',
   shareTitle: 'Abdul Ahad: I build systems that think.',
   shareDescription:
-    'Software engineer and AI researcher. Five years of event-sourced enterprise systems, published deep learning research, now an MSc in Computing in Ireland.',
+    'Software engineer and machine learning researcher. More than five years building Java systems at BRAC IT, a co-authored IEEE paper, and an MSc in Computing at ATU.',
   locale: 'en_IE',
   image: {
     path: 'og-image.jpg',

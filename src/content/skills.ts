@@ -1,35 +1,36 @@
 import type { SkillGroup } from './types';
 
+// Grouped by how central each tool is to my work, following the 2026 CV.
 export const skillGroups: SkillGroup[] = [
   {
     id: 'languages',
     name: 'Languages',
-    items: ['Java', 'Python 3', 'TypeScript', 'JavaScript', 'C', 'C++', 'Shell', '8086 Assembly'],
+    items: ['Java', 'Python', 'SQL', 'TypeScript', 'Shell'],
+  },
+  {
+    id: 'backend',
+    name: 'Backend',
+    items: ['Spring Boot', 'Spring MVC', 'Hibernate', 'JPA', 'REST APIs', 'Thymeleaf'],
   },
   {
     id: 'architecture',
-    name: 'Architecture & backend',
-    items: ['Spring Boot', 'Hibernate', 'JPA', 'Thymeleaf', 'DDD', 'CQRS', 'Event Sourcing', 'Reactive streams', 'Microservices'],
+    name: 'Architecture',
+    items: ['DDD', 'CQRS', 'Event Sourcing', 'Microservices', 'Reactive streams', 'Idempotent processing'],
   },
   {
     id: 'data',
-    name: 'Data stores',
-    items: ['PostgreSQL', 'Oracle SQL', 'MySQL', 'SQLite', 'MongoDB', 'Redis', 'Elasticsearch'],
+    name: 'Databases',
+    items: ['PostgreSQL', 'Oracle', 'MySQL', 'MongoDB', 'Redis', 'Elasticsearch'],
   },
   {
     id: 'ml',
-    name: 'AI & machine learning',
-    items: ['PyTorch', 'TensorFlow', 'Keras', 'scikit-learn', 'OpenCV', 'Hugging Face Transformers', 'NumPy', 'Pandas', 'Jupyter'],
+    name: 'Machine learning',
+    items: ['PyTorch', 'TensorFlow', 'scikit-learn', 'OpenCV', 'NumPy', 'pandas', 'Jupyter'],
   },
   {
     id: 'infra',
-    name: 'Infrastructure & tooling',
-    items: ['Docker', 'Ansible', 'GitLab CI/CD', 'Git', 'ELK Stack', 'Grafana', 'Linux'],
-  },
-  {
-    id: 'web',
-    name: 'Web',
-    items: ['Angular', 'HTML', 'CSS', 'Bootstrap', 'jQuery', 'JSON', 'XML'],
+    name: 'DevOps and observability',
+    items: ['Git', 'GitLab CI/CD', 'Docker', 'Ansible', 'ELK Stack', 'Grafana', 'Linux'],
   },
 ];
 
@@ -44,7 +45,6 @@ export const skillEvidence: Record<string, string[]> = {
   'scikit-learn': ['Tomato leaf disease paper (ICCIT 2023)'],
   NumPy: ['Tomato leaf disease paper (ICCIT 2023)'],
   Jupyter: ['Tomato leaf disease paper (ICCIT 2023)'],
-  '8086 Assembly': ['Teaching assistant, AIUB'],
 };
 
 /** Skill names matched against the patterns listed on each project. */
@@ -54,4 +54,5 @@ export const patternAliases: Record<string, string[]> = {
   'Event Sourcing': ['Event Sourcing'],
   'Reactive streams': ['Reactive services', 'Reactive streams', 'Reactive pipelines'],
   Microservices: ['Microservices'],
+  'Idempotent processing': ['Idempotency', 'Idempotent pipelines', 'Idempotent REST'],
 };

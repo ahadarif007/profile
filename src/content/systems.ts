@@ -1,7 +1,7 @@
 import type { ArchitectureNode } from './types';
 
 export const architectureNote =
-  'This is a representative design built from patterns I used in EKOTA, Fin-Pulse, Employee Happiness and the service template. It isn’t a diagram of any one production system.';
+  'This is a representative design built from patterns I used in Ekota, Fin-Pulse, Employee Happiness and the service template. It isn’t a diagram of any one production system.';
 
 export const architectureNodes: ArchitectureNode[] = [
   {
@@ -9,7 +9,7 @@ export const architectureNodes: ArchitectureNode[] = [
     label: 'Client',
     kind: 'edge',
     detail: 'Field apps, dashboards and other services. Every write request carries an idempotency key.',
-    usedIn: ['EKOTA', 'Fin-Pulse'],
+    usedIn: ['Ekota', 'Fin-Pulse'],
   },
   {
     id: 'gate',
@@ -33,7 +33,7 @@ export const architectureNodes: ArchitectureNode[] = [
     kind: 'write',
     detail:
       'The DDD consistency boundary. It decides whether a command is allowed and emits domain events; it never mutates shared state directly.',
-    usedIn: ['EKOTA', 'Service Template'],
+    usedIn: ['Ekota', 'Service Template'],
   },
   {
     id: 'events',
@@ -41,7 +41,7 @@ export const architectureNodes: ArchitectureNode[] = [
     kind: 'store',
     detail:
       'An append-only log of everything that happened. Current state is a fold over events, so every figure is auditable and replayable.',
-    usedIn: ['EKOTA', 'Fin-Pulse', 'Employee Happiness'],
+    usedIn: ['Ekota', 'Fin-Pulse', 'Employee Happiness'],
   },
   {
     id: 'projector',
@@ -69,7 +69,7 @@ export const architectureNodes: ArchitectureNode[] = [
     label: 'Query API',
     kind: 'read',
     detail: 'Serves reads without touching the write side. That separation is the whole point of CQRS.',
-    usedIn: ['EKOTA', 'Employee Happiness'],
+    usedIn: ['Ekota', 'Employee Happiness'],
   },
   {
     id: 'observe',
