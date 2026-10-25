@@ -1,0 +1,363 @@
+/* ---------- Motion layer: hooks used by src/motion ---------- */
+
+/*
+ * Boot targets wait for the opening sequence. If scripts never run, the
+ * failsafe reveals them; reduced-motion users never see them hidden.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-boot] {
+    opacity: 0;
+    animation: boot-failsafe 0.6s 2.5s forwards;
+  }
+
+  .motion-on [data-boot] {
+    animation: none;
+  }
+}
+
+@keyframes boot-failsafe {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Scenes whose elements travel in from the side must never widen the page (phones grow the layout viewport). */
+.manifesto,
+.work__head,
+.principles {
+  overflow-x: clip;
+}
+
+/* Masks for line reveals: generous on top and sides so glyphs and glow are never clipped at rest. */
+.hero__line {
+  clip-path: inset(-0.4em -0.6em -0.12em -0.6em);
+}
+
+/* ---------- Progress rail ---------- */
+
+.rail {
+  display: none;
+  position: fixed;
+  z-index: 40;
+  top: 50%;
+  right: 22px;
+  width: 1px;
+  height: 28vh;
+  background: var(--line-strong);
+  translate: 0 -50%;
+  pointer-events: none;
+  transition: background-color 0.4s var(--ease-out);
+}
+
+.motion-on .rail {
+  display: block;
+}
+
+.rail__fill {
+  position: absolute;
+  inset: 0;
+  background: var(--cyan);
+  box-shadow: 0 0 8px rgb(var(--cyan-rgb) / 0.7);
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+}
+
+.rail__label {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  translate: -50% 0;
+  writing-mode: vertical-rl;
+  font-family: var(--f-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-3);
+  transition: color 0.4s var(--ease-out);
+}
+
+.rail--light {
+  background: var(--paper-line);
+}
+
+.rail--light .rail__fill {
+  background: var(--paper-accent);
+  box-shadow: none;
+}
+
+.rail--light .rail__label {
+  color: var(--paper-ink-2);
+}
+
+@media (max-width: 760px) {
+  .rail {
+    top: 0;
+    right: 0;
+    left: 0;
+    width: auto;
+    height: 2px;
+    background: transparent;
+    translate: none;
+  }
+
+  .rail__fill {
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+
+  .rail__label {
+    display: none;
+  }
+}
+
+/* ---------- Context-sensitive navigation ---------- */
+
+.nav__links a[aria-current='true'] {
+  color: var(--ink);
+  background: rgb(255 255 255 / 0.06);
+}
+
+.nav--light {
+  border-color: rgb(12 15 19 / 0.12);
+  background: rgb(235 232 225 / 0.8);
+  color: var(--paper-ink);
+}
+
+.nav--light .nav__mark {
+  border-color: var(--paper-accent);
+  box-shadow: none;
+}
+
+.nav--light .nav__links a {
+  color: var(--paper-ink-2);
+}
+
+.nav--light .nav__links a:hover,
+.nav--light .nav__links a[aria-current='true'] {
+  color: var(--paper-ink);
+  background: rgb(12 15 19 / 0.06);
+}
+
+.nav--light .nav__links .nav__cta,
+.nav--light .nav__links .nav__cta:hover {
+  background: var(--paper-ink);
+  color: var(--paper);
+}
+
+.nav--light .nav__toggle {
+  background: rgb(12 15 19 / 0.08);
+}
+
+.nav--light .nav__burger,
+.nav--light .nav__burger::before {
+  background: var(--paper-ink);
+}
+
+@media (max-width: 760px) {
+  .js .nav--light .nav__links {
+    border-color: rgb(12 15 19 / 0.12);
+    background: rgb(235 232 225 / 0.97);
+  }
+}
+
+/* ---------- Drawn hairlines (scaled by --draw) ---------- */
+
+.motion-on .uptime__list {
+  position: relative;
+  border-top-color: transparent;
+}
+
+.motion-on .uptime__list::before,
+.motion-on .principle::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--line-strong);
+  transform: scaleX(var(--draw, 1));
+  transform-origin: 0 50%;
+}
+
+.motion-on .principle {
+  position: relative;
+  border-top-color: transparent;
+}
+
+.motion-on .principle::before {
+  background: var(--line);
+}
+
+@media (max-width: 620px) {
+  .motion-on .uptime__list {
+    border-left-color: transparent;
+  }
+
+  .motion-on .uptime__list::before {
+    top: 0;
+    right: auto;
+    bottom: 0;
+    left: -1px;
+    width: 1px;
+    height: auto;
+    transform: scaleY(var(--draw, 1));
+    transform-origin: 50% 0;
+  }
+}
+
+/* ---------- Horizontal project theatre (wide screens only) ---------- */
+
+.work__hud {
+  display: none;
+}
+
+.work--h .work__viewport {
+  position: relative;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.work--h .work__track {
+  display: flex;
+  width: max-content;
+  height: 100%;
+}
+
+.work--h .project {
+  flex: 0 0 100vw;
+  width: 100vw;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: clamp(84px, 11vh, 112px) max(var(--gutter), (100vw - var(--max)) / 2) clamp(72px, 10vh, 96px);
+}
+
+.work--h .project + .project {
+  border-top: 0;
+}
+
+/* Laptop-height screens: tighter type so every panel clears the nav and the progress counter. */
+@media (max-height: 880px) {
+  .work--h .project {
+    row-gap: 14px;
+    padding-top: 76px;
+    padding-bottom: 88px;
+  }
+
+  .work--h .project__title {
+    margin-top: 8px;
+    font-size: clamp(1.9rem, 3.4vw, 3.2rem);
+  }
+
+  .work--h .project--billboard .project__title {
+    font-size: clamp(2.4rem, 5.4vw, 5.4rem);
+  }
+
+  .work--h .project--stat .project__result strong {
+    font-size: clamp(3.2rem, 6vw, 6rem);
+  }
+
+  .work--h .project__tagline {
+    margin-top: 10px;
+    font-size: 1.05rem;
+  }
+
+  .work--h .project__spec {
+    gap: 12px;
+    font-size: 0.9rem;
+  }
+
+  .work--h .project__stage figcaption {
+    margin-top: 10px;
+  }
+}
+
+.work--h .work__hud {
+  position: absolute;
+  right: max(var(--gutter), (100vw - var(--max)) / 2);
+  bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-family: var(--f-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-out);
+}
+
+.work--h .work__hud.is-on {
+  opacity: 1;
+}
+
+.work__hud-count {
+  color: var(--cyan);
+}
+
+.work__hud-title {
+  min-width: 14ch;
+  color: var(--ink);
+}
+
+.work__hud-bar {
+  position: relative;
+  width: 140px;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.work__hud-bar span {
+  position: absolute;
+  inset: 0;
+  background: var(--cyan);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+/* ---------- Systems data packet ---------- */
+
+.arch-packet {
+  fill: var(--cyan);
+  filter: drop-shadow(0 0 6px var(--cyan));
+  pointer-events: none;
+}
+
+/* ---------- WebGL core ---------- */
+
+.gl-stage {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.has-gl .gl-stage {
+  display: block;
+}
+
+/*
+ * The poster's object hands over to WebGL. Only the tick ring and orbit stay as a
+ * 2D frame; the tilted ring and scan arc go too, since the 3D core draws its own scan.
+ */
+.core__shell,
+.core__mind,
+.core__nucleus,
+.core__ring,
+.core__scan {
+  transition: opacity 1.2s var(--ease-out);
+}
+
+.has-gl .core__shell,
+.has-gl .core__mind,
+.has-gl .core__nucleus,
+.has-gl .core__ring,
+.has-gl .core__scan {
+  opacity: 0;
+}

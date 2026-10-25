@@ -1,0 +1,51 @@
+:root {
+  /* Canvas */
+  --bg: #04060a;
+  --bg-raise: #080c12;
+  --panel: #0c121a;
+  --panel-2: #111924;
+  --line: rgb(150 210 255 / 0.09);
+  --line-strong: rgb(150 210 255 / 0.2);
+
+  /* Ink */
+  --ink: #eef3f8;
+  --ink-2: #a9b5c4;
+  --ink-3: #7c889a;
+
+  /* Signal */
+  --cyan: #39e6ff;
+  --cyan-rgb: 57 230 255;
+  --magenta: #ff3dae;
+  --magenta-rgb: 255 61 174;
+  --mint: #5bffc8;
+
+  /* Lab chapter (paper) */
+  --paper: #ebe8e1;
+  --paper-ink: #0c0f13;
+  --paper-ink-2: #4b525c;
+  --paper-line: rgb(12 15 19 / 0.14);
+  --paper-accent: #0a7a89;
+
+  /* Type */
+  --f-display: 'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --f-body: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --f-mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', monospace;
+
+  --fs-mega: clamp(2.9rem, 12.2vw, 13.5rem);
+  --fs-display: clamp(2.4rem, 7.4vw, 8.4rem);
+  --fs-h2: clamp(2.4rem, 6vw, 6.2rem);
+  --fs-h3: clamp(1.9rem, 4.4vw, 4.4rem);
+  --fs-lede: clamp(1.08rem, 0.98rem + 0.45vw, 1.35rem);
+  --fs-body: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --fs-small: 0.875rem;
+  --fs-label: 0.75rem;
+
+  /* Space */
+  --gutter: clamp(16px, 4vw, 56px);
+  --max: 1440px;
+  --section: clamp(96px, 18vh, 220px);
+  --radius: clamp(18px, 2vw, 28px);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}

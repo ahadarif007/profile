@@ -1,0 +1,224 @@
+/* ---------- Scene 01 · System boot ---------- */
+
+.hero {
+  position: relative;
+  display: grid;
+  align-items: end;
+  min-height: 100svh;
+  padding-block: 112px clamp(28px, 5vh, 56px);
+  overflow: clip;
+  isolation: isolate;
+}
+
+/* Distant layer: a technical floor receding to the horizon */
+.hero__grid {
+  position: absolute;
+  inset: auto -50% 0;
+  height: 58%;
+  z-index: -3;
+  background-image:
+    linear-gradient(var(--line-strong) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-strong) 1px, transparent 1px);
+  background-size: 72px 72px;
+  background-position: center bottom;
+  transform: perspective(520px) rotateX(64deg);
+  transform-origin: 50% 100%;
+  mask-image: linear-gradient(to top, #000 0%, rgb(0 0 0 / 0.6) 35%, transparent 85%);
+  -webkit-mask-image: linear-gradient(to top, #000 0%, rgb(0 0 0 / 0.6) 35%, transparent 85%);
+}
+
+.hero__horizon {
+  position: absolute;
+  inset: auto 0 32%;
+  z-index: -2;
+  height: 140px;
+  background: radial-gradient(50% 50% at 50% 50%, rgb(var(--cyan-rgb) / 0.16), transparent 70%);
+  pointer-events: none;
+}
+
+.hero__horizon::after {
+  content: '';
+  position: absolute;
+  inset: 50% 10% auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(var(--cyan-rgb) / 0.55), transparent);
+}
+
+/* Midground: the signature core */
+.hero__core {
+  position: absolute;
+  z-index: -1;
+  top: 46%;
+  right: -9vw;
+  width: min(74vw, 1040px);
+  aspect-ratio: 1;
+  /* Individual translate keeps GSAP's transform free for motion. */
+  translate: 0 -50%;
+  pointer-events: none;
+}
+
+.hero__inner {
+  position: relative;
+}
+
+.hero__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: clamp(16px, 3vh, 36px);
+}
+
+.hero__title {
+  font-family: var(--f-display);
+  font-size: var(--fs-mega);
+  font-weight: 700;
+  line-height: 0.84;
+  letter-spacing: -0.055em;
+  text-transform: uppercase;
+}
+
+.hero__line {
+  display: block;
+  padding-bottom: 0.04em;
+}
+
+.hero__line-i {
+  display: inline-block;
+}
+
+.hero__line--2 {
+  padding-left: 0.9em;
+}
+
+.hero__foot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 24px 48px;
+  margin-top: clamp(28px, 5vh, 56px);
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.hero__intro {
+  max-width: 50ch;
+  font-size: var(--fs-lede);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.hero__actions {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+@media (max-width: 900px) {
+  .hero__core {
+    top: 34%;
+    right: -38vw;
+    width: 118vw;
+    opacity: 0.75;
+  }
+
+  .hero__foot {
+    grid-template-columns: 1fr;
+  }
+
+  .hero__actions {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 520px) {
+  .hero__meta-loc {
+    display: none;
+  }
+
+  .hero__core {
+    top: 24%;
+    opacity: 0.55;
+  }
+
+  /* Four lines on phones so the headline can stay monumental. */
+  .hero__title {
+    font-size: 17.5vw;
+  }
+
+  .hero__title .accent {
+    display: block;
+  }
+
+  .hero__line--2 {
+    padding-left: 0.5em;
+  }
+}
+
+/* ---------- Core poster styling ---------- */
+
+.core-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.core__edge {
+  fill: none;
+  stroke: var(--cyan);
+  stroke-width: 1;
+}
+
+.core__edge--d0 { stroke-opacity: 0.05; }
+.core__edge--d1 { stroke-opacity: 0.1; }
+.core__edge--d2 { stroke-opacity: 0.18; }
+.core__edge--d3 { stroke-opacity: 0.32; }
+.core__edge--d4 { stroke-opacity: 0.55; stroke-width: 1.3; }
+
+.core__node {
+  fill: #c9f8ff;
+  opacity: 0.85;
+}
+
+.core__synapse {
+  fill: none;
+  stroke: #d8fbff;
+  stroke-width: 0.9;
+}
+
+.core__synapse--d0 { stroke-opacity: 0.08; }
+.core__synapse--d1 { stroke-opacity: 0.14; }
+.core__synapse--d2 { stroke-opacity: 0.24; }
+.core__synapse--d3 { stroke-opacity: 0.4; }
+.core__synapse--d4 { stroke-opacity: 0.65; }
+
+.core__ticks {
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-opacity: 0.5;
+  stroke-width: 1;
+}
+
+.core__orbit {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-dasharray: 2 8;
+}
+
+.core__scan {
+  fill: none;
+  stroke: var(--magenta);
+  stroke-width: 1.4;
+  stroke-opacity: 0.75;
+  stroke-dasharray: 220 2000;
+  filter: drop-shadow(0 0 6px rgb(var(--magenta-rgb) / 0.8));
+}
+
+.core__ring {
+  vector-effect: non-scaling-stroke;
+  fill: none;
+  stroke: var(--cyan);
+  stroke-opacity: 0.35;
+  stroke-width: 1;
+}

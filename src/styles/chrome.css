@@ -1,0 +1,206 @@
+/* ---------- Atmosphere: fixed depth layers behind every scene ---------- */
+
+.atmos {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 75% 35%, #0a1726 0%, transparent 60%),
+    radial-gradient(90% 60% at 10% 100%, #071019 0%, transparent 70%),
+    var(--bg);
+}
+
+.atmos__glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 40% at 50% 120%, rgb(var(--cyan-rgb) / 0.08), transparent 70%);
+}
+
+.atmos__grain {
+  position: absolute;
+  inset: -50%;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- Floating navigation ---------- */
+
+.nav {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: min(100% - 24px, 1120px);
+  height: 56px;
+  padding: 0 8px 0 20px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgb(6 9 14 / 0.72);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  translate: -50% 0;
+  transition:
+    background-color 0.4s var(--ease-out),
+    border-color 0.4s var(--ease-out),
+    color 0.4s var(--ease-out);
+}
+
+.nav__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.nav__mark {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--cyan);
+  border-radius: 2px;
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px rgb(var(--cyan-rgb) / 0.6);
+}
+
+.nav__links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav__links a {
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition:
+    color 0.25s,
+    background-color 0.25s;
+}
+
+.nav__links a:hover {
+  color: var(--ink);
+  background: rgb(255 255 255 / 0.05);
+}
+
+.nav__links .nav__cta {
+  margin-left: 8px;
+  background: var(--ink);
+  color: var(--bg);
+  font-weight: 550;
+}
+
+.nav__links .nav__cta:hover {
+  background: #fff;
+  color: var(--bg);
+}
+
+.nav__toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.06);
+  cursor: pointer;
+}
+
+.nav__burger,
+.nav__burger::before {
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  margin: auto;
+  background: var(--ink);
+  transition: transform 0.35s var(--ease-out);
+}
+
+.nav__burger {
+  position: relative;
+  transform: translateY(-3px);
+}
+
+.nav__burger::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+}
+
+.nav.is-open .nav__burger {
+  transform: translateY(0) rotate(45deg);
+}
+
+.nav.is-open .nav__burger::before {
+  transform: translateY(-6px) rotate(-90deg);
+}
+
+@media (max-width: 760px) {
+  .nav {
+    height: 52px;
+    padding: 0 4px 0 18px;
+  }
+
+  .nav__toggle {
+    display: block;
+  }
+
+  .js .nav__links {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    background: rgb(6 9 14 / 0.97);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition:
+      opacity 0.3s var(--ease-out),
+      transform 0.4s var(--ease-out),
+      visibility 0s 0.4s;
+  }
+
+  .js .nav.is-open .nav__links {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 0.3s var(--ease-out),
+      transform 0.4s var(--ease-out);
+  }
+
+  .nav__links a {
+    padding: 14px 16px;
+    font-size: 1.1rem;
+  }
+
+  .nav__links .nav__cta {
+    margin: 6px 0 0;
+    text-align: center;
+  }
+
+  /* Without JS the links simply sit in the bar and scroll horizontally. */
+  .no-js .nav__toggle {
+    display: none;
+  }
+
+  .no-js .nav__links {
+    overflow-x: auto;
+  }
+}

@@ -1,0 +1,187 @@
+/* Generated project visuals (dark panels) */
+
+.vx {
+  width: 100%;
+  height: 100%;
+}
+
+.vx-grid {
+  fill: none;
+  stroke: rgb(150 210 255 / 0.05);
+  stroke-width: 1;
+}
+
+.vx-arrowhead {
+  fill: var(--cyan);
+}
+
+.vx-label {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  fill: var(--ink-2);
+}
+
+.vx-label--strong {
+  fill: var(--ink);
+  font-weight: 600;
+}
+
+.vx-label--dim {
+  fill: var(--ink-3);
+}
+
+.vx-label--hot {
+  fill: var(--magenta);
+}
+
+.vx-line {
+  fill: none;
+  stroke: var(--cyan);
+  stroke-width: 1.5;
+}
+
+.vx-line--dim {
+  stroke-opacity: 0.4;
+}
+
+.vx-line--bold {
+  stroke-width: 2.2;
+}
+
+.vx-line--hot {
+  stroke: var(--magenta);
+}
+
+.vx-line--flow {
+  stroke-dasharray: 5 6;
+}
+
+.vx-node {
+  fill: #0e1621;
+  stroke: rgb(var(--cyan-rgb) / 0.6);
+  stroke-width: 1.4;
+}
+
+.vx-node--hot {
+  stroke: var(--cyan);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 10px rgb(var(--cyan-rgb) / 0.55));
+}
+
+.vx-event {
+  fill: var(--cyan);
+}
+
+.vx-recon {
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-opacity: 0.45;
+  stroke-dasharray: 2 4;
+}
+
+.vx-dot {
+  fill: var(--cyan);
+  filter: drop-shadow(0 0 6px var(--cyan));
+}
+
+.vx-dot--hot {
+  fill: var(--magenta);
+  filter: drop-shadow(0 0 6px var(--magenta));
+}
+
+.vx-swatch { fill: var(--cyan); }
+.vx-swatch--hot { fill: var(--magenta); }
+.vx-swatch--dim { fill: var(--ink-3); }
+
+.vx-record {
+  fill: rgb(var(--cyan-rgb) / 0.75);
+}
+
+.vx-record--dup {
+  fill: none;
+  stroke: var(--magenta);
+  stroke-width: 1.5;
+}
+
+.vx-gate {
+  fill: var(--cyan);
+  filter: drop-shadow(0 0 10px rgb(var(--cyan-rgb) / 0.7));
+}
+
+.vx-row {
+  fill: rgb(var(--cyan-rgb) / 0.16);
+  stroke: rgb(var(--cyan-rgb) / 0.5);
+}
+
+.vx-payload {
+  fill: rgb(var(--cyan-rgb) / 0.85);
+}
+
+.vx-payload--hot {
+  fill: var(--magenta);
+  filter: drop-shadow(0 0 8px rgb(var(--magenta-rgb) / 0.8));
+}
+
+.vx-plate {
+  fill: rgb(14 22 33 / 0.85);
+  stroke: rgb(var(--cyan-rgb) / 0.45);
+  stroke-width: 1.2;
+}
+
+.vx-plate--hot {
+  fill: rgb(var(--cyan-rgb) / 0.14);
+  stroke: var(--cyan);
+  filter: drop-shadow(0 0 12px rgb(var(--cyan-rgb) / 0.45));
+}
+
+/* Labels inside panels get too small on phones; the visual reads as a diagram without them. */
+@media (max-width: 560px) {
+  .vx-label {
+    display: none;
+  }
+}
+
+/* Lab figure glyphs (paper chapter) */
+
+.g-line {
+  fill: none;
+  stroke: var(--paper-ink);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.g-line--thin {
+  stroke-width: 1;
+  stroke-opacity: 0.6;
+}
+
+.g-tile {
+  fill: var(--paper-accent);
+}
+
+.g-block {
+  fill: var(--paper-ink);
+}
+
+.g-cell {
+  fill: none;
+  stroke: var(--paper-ink);
+  stroke-opacity: 0.3;
+}
+
+.g-cell--on {
+  fill: var(--paper-accent);
+  stroke: var(--paper-accent);
+  stroke-opacity: 1;
+}
+
+.g-bar {
+  fill: var(--paper-ink);
+  opacity: 0.3;
+}
+
+.g-bar--on {
+  fill: var(--paper-accent);
+  opacity: 1;
+}
