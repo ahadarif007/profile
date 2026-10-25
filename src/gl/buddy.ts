@@ -496,6 +496,11 @@ export class BuddyStage implements AvatarStage {
     this.waveLeft = seconds;
   }
 
+  /** The 3D model has no pointing pose, so it waves. */
+  point(seconds = 1.8): void {
+    this.wave(seconds);
+  }
+
   hop(): void {
     this.hopLeft = 0.55;
   }

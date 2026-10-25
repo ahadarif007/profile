@@ -258,7 +258,7 @@ export function initBuddy(): void {
           if (!entries.some((e) => e.isIntersecting)) return;
           seen?.disconnect();
           wake();
-          stage?.wave();
+          stage?.point();
           speak(copy.contact);
         },
         { threshold: 0.35 },

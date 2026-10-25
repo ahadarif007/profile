@@ -34,6 +34,7 @@ class Spring {
 /** How long a swap between two drawings takes (ms): quick for blinks and talking, softer otherwise. */
 const fadeFor = (from: SpriteFrame | null, to: SpriteFrame): number => {
   if (from === 'blink' || to === 'blink') return 60;
+  if (from === 'jump' || to === 'jump') return 90;
   if (['ah', 'oh'].includes(to) || ['ah', 'oh'].includes(from ?? '')) return 70;
   return 180;
 };
@@ -44,15 +45,20 @@ interface Layer {
   mirror: boolean;
 }
 
+const HOP_SECONDS = 0.62;
+const HOP_HEIGHT = 46;
+
 /**
- * The drawn 2D avatar: head and shoulders from the owner's expression sheet,
- * rising from the bottom edge of the screen. It crossfades between drawn
- * frames (blink, talk, happy, shy, sleepy, surprised, glance, wave) and
- * moves on springs (tilt, sway, bob, bounce). No WebGL needed.
+ * The drawn 2D avatar: the owner's whole standing figure from the character
+ * sheets, feet on the bottom edge of the screen. It crossfades between drawn
+ * frames (blink, talk, happy, shy, sleepy, surprised, glance, wave, point,
+ * jump) and moves on springs (lean, sway, breathing, squash on landing).
+ * No WebGL needed.
  */
 export class SpriteStage implements AvatarStage {
   readonly ready: Promise<void>;
   private readonly el: HTMLDivElement;
+  private readonly shadow: HTMLDivElement;
   private readonly layers: [Layer, Layer];
   private front: 0 | 1 = 0;
   private fadeElapsed = 0;
@@ -69,6 +75,8 @@ export class SpriteStage implements AvatarStage {
   private blink = 0;
   private nextBlink = 2;
   private waveLeft = 0;
+  private pointLeft = 0;
+  private hopLeft = 0;
   private talkLeft = 0;
   private talkShape: SpriteFrame = 'neutral';
   private nextShape = 0;
@@ -76,7 +84,6 @@ export class SpriteStage implements AvatarStage {
 
   private readonly tilt = new Spring(0, 90, 11);
   private readonly sway = new Spring(0, 70, 12);
-  private readonly lift = new Spring(0, 60, 11);
   private readonly stretch = new Spring(1, 260, 9);
 
   constructor(host: HTMLElement) {
@@ -92,7 +99,10 @@ export class SpriteStage implements AvatarStage {
       return { el, frame: null, mirror: false };
     };
     this.layers = [layer(), layer()];
-    host.prepend(this.el);
+    this.shadow = document.createElement('div');
+    this.shadow.className = 'buddy__shadow';
+    this.shadow.setAttribute('aria-hidden', 'true');
+    host.prepend(this.shadow, this.el);
 
     const image = new Image();
     image.src = spriteUrl;
@@ -130,10 +140,15 @@ export class SpriteStage implements AvatarStage {
     this.waveLeft = seconds;
   }
 
-  /** A bust can't jump off the screen edge, so it dips, squashes and springs back with a wobble instead. */
+  point(seconds = 2.4): void {
+    this.pointLeft = seconds;
+  }
+
+  /** A real jump with the jumping drawing: crouch, up, down, then a squash on landing. */
   hop(): void {
-    this.stretch.velocity -= 1.6;
-    this.lift.velocity += 45;
+    if (this.hopLeft > 0) return;
+    this.hopLeft = HOP_SECONDS;
+    this.stretch.velocity -= 1.2;
   }
 
   talk(seconds: number): void {
@@ -172,7 +187,10 @@ export class SpriteStage implements AvatarStage {
 
   /** Which drawing fits the moment, most important first. */
   private pick(t: number): [SpriteFrame, boolean] {
+    const airborne = this.hopLeft > 0.06 && this.hopLeft < HOP_SECONDS - 0.06;
+    if (airborne) return ['jump', false];
     if (this.waveLeft > 0) return ['wave', false];
+    if (this.pointLeft > 0 && !this.sleeping) return ['point', false];
     if (this.sleeping) return [this.sleepTime < 1.6 ? 'sleepy' : 'blink', false];
     if (this.surpriseLeft > 0) return ['surprised', false];
     if (this.talkLeft > 0) {
@@ -199,6 +217,12 @@ export class SpriteStage implements AvatarStage {
     this.look.y = ease(this.look.y, this.sleeping ? 0 : this.look.ty, 6, dt);
     this.leanTarget = ease(this.leanTarget, 0, 3, dt);
     this.waveLeft = Math.max(0, this.waveLeft - dt);
+    this.pointLeft = Math.max(0, this.pointLeft - dt);
+    if (this.hopLeft > 0) {
+      this.hopLeft = Math.max(0, this.hopLeft - dt);
+      // Landing squash.
+      if (this.hopLeft === 0) this.stretch.velocity -= 1.6;
+    }
     this.talkLeft = Math.max(0, this.talkLeft - dt);
     this.surpriseLeft = Math.max(0, this.surpriseLeft - dt);
     if (this.hovering) this.hoverTime += dt;
@@ -224,22 +248,26 @@ export class SpriteStage implements AvatarStage {
     this.layers[this.front].el.style.opacity = p.toFixed(3);
     this.layers[this.back].el.style.opacity = (1 - smoothstep(0.45, 1, p)).toFixed(3);
 
-    // Motion on springs. It bobs downwards only, so the cut at the shoulders stays below the screen edge.
+    // Motion on springs, pivoting at the feet: lean, sway, breathing, and the jump arc.
     const waving = frame === 'wave';
     const tilt = this.tilt.step(
-      this.look.x * 4 - this.leanTarget * 7 + (this.sleeping ? 7 : 0) + (waving ? Math.sin(t * 7) * 2.5 : 0) + Math.sin(t * 0.9) * 0.8,
+      this.look.x * 3 - this.leanTarget * 6 + (this.sleeping ? 4 : 0) + (waving ? Math.sin(t * 7) * 1.5 : 0) + Math.sin(t * 0.9) * 0.6,
       dt,
     );
-    const sway = this.sway.step(this.look.x * 5, dt);
-    const breath = (1 - Math.cos(t * (this.sleeping ? 0.9 : 1.8))) * (this.sleeping ? 2.2 : 2.8);
-    const lift = this.lift.step(breath + this.look.y * 2, dt);
-    const stretch = this.stretch.step(1 + Math.sin(t * 2.1) * 0.006, dt);
+    const sway = this.sway.step(this.look.x * 4, dt);
+    const breathe = Math.sin(t * (this.sleeping ? 1 : 2.1)) * (this.sleeping ? 0.012 : 0.008);
+    const stretch = this.stretch.step(1 + breathe, dt);
+    const arc = this.hopLeft > 0 ? Math.sin((1 - this.hopLeft / HOP_SECONDS) * Math.PI) : 0;
     this.el.style.transform =
-      `translate(${sway.toFixed(2)}px, ${Math.max(-2, lift).toFixed(2)}px) rotate(${tilt.toFixed(2)}deg) ` +
+      `translate(${sway.toFixed(2)}px, ${(-arc * HOP_HEIGHT).toFixed(2)}px) rotate(${tilt.toFixed(2)}deg) ` +
       `scale(${(1 / Math.sqrt(stretch)).toFixed(4)}, ${stretch.toFixed(4)})`;
+    // The shadow stays on the ground and shrinks while it is in the air.
+    this.shadow.style.transform = `translateX(${(sway * 0.6).toFixed(2)}px) scale(${(1 - arc * 0.45).toFixed(3)})`;
+    this.shadow.style.opacity = (1 - arc * 0.5).toFixed(3);
   };
 
   dispose(): void {
     this.el.remove();
+    this.shadow.remove();
   }
 }

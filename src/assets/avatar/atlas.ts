@@ -2,11 +2,11 @@
 
 /** Drawn 2D avatar: frames in reading order, SPRITE.columns per row. */
 export const SPRITE = {
-  frameWidth: 330,
-  frameHeight: 248,
-  columns: 5,
+  frameWidth: 234,
+  frameHeight: 387,
+  columns: 6,
   rows: 2,
-  frames: ['neutral', 'happy', 'ah', 'oh', 'blink', 'sleepy', 'surprised', 'glance', 'shy', 'wave'] as const,
+  frames: ['neutral', 'happy', 'ah', 'oh', 'blink', 'sleepy', 'surprised', 'glance', 'shy', 'wave', 'point', 'jump'] as const,
 };
 
 export type SpriteFrame = (typeof SPRITE.frames)[number];

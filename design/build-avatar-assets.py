@@ -6,7 +6,7 @@ Run from the repository root:  python3 design/build-avatar-assets.py
 Needs Pillow (with WebP), numpy and scipy. The sheets themselves are never published.
 
 Writes:
-  src/assets/avatar/sprite.webp  drawn 2D avatar: one frame per expression plus a wave
+  src/assets/avatar/sprite.webp  drawn 2D avatar: standing figure, one frame per expression plus poses
   src/assets/avatar/face.webp    drawn eyes, eyebrows and mouths for the 3D head
   src/assets/avatar/atlas.ts     where each piece sits in those images
 """
@@ -27,10 +27,17 @@ CELL_Y = [(4, 336), (346, 680), (690, 1020)]
 CELL_W, CELL_H = 330, 330
 EXPRESSIONS = ['neutral', 'happy', 'ah', 'oh', 'blink', 'sleepy', 'surprised', 'glance', 'shy']
 
-# 2D frames are wider than the cells so the raised hand of the wave fits.
-FRAME_W, FRAME_H = 440, 330
-FRAME_SCALE = 0.75
-SPRITE_COLUMNS = 5
+# Full-body 2D frames: the standing body from the turnaround sheet with each expression's
+# head swapped on, plus whole poses from the poses sheet. All drawn at one scale.
+STANDING_HEIGHT = 380
+SPRITE_COLUMNS = 6
+# Figures in the source sheets: (x0, y0, x1, y1).
+FRONT = ('turnaround.jpeg', (15, 60, 262, 545))
+POSES = {
+    'wave': (28, 80, 395, 730),
+    'jump': (365, 83, 706, 672),
+    'point': (695, 80, 1030, 730),
+}
 
 # Face parts sheet (green background): name -> (x0, y0, x1, y1).
 FACE_PARTS = {
@@ -67,6 +74,10 @@ def cut_white(rgb: np.ndarray) -> np.ndarray:
     labels, _ = ndimage.label(white)
     edge = np.unique(np.concatenate([labels[0], labels[-1], labels[:, 0], labels[:, -1]]))
     bg = np.isin(labels, edge[edge > 0])
+    # Large pure-white gaps enclosed by the drawing (between legs, under an arm) are background too.
+    holes, _ = ndimage.label(white & ~bg & (lo > 240) & (spread < 14))
+    sizes = np.bincount(holes.ravel())
+    bg |= np.isin(holes, np.nonzero(sizes > 500)[0][1:])
     alpha = np.where(bg, 0.0, 1.0)
     # Soft edge: unsaturated light pixels next to the background are partly transparent ink.
     band = ndimage.binary_dilation(bg, iterations=2) & ~bg & (spread < 40)
@@ -87,30 +98,75 @@ def cut_green(rgb: np.ndarray) -> np.ndarray:
     return np.dstack([color, alpha * 255]).astype(np.uint8)
 
 
-def hair_box(rgba: np.ndarray, rows: int, cols: int | None = None) -> tuple[int, int, int, int]:
-    """Bounds of the dark hair in the top `rows` (and left `cols`) of a cut-out."""
-    c = rgba[:rows, :cols, :3].astype(int)
-    mask = (rgba[:rows, :cols, 3] > 200) & (c.mean(-1) < 80) & (c[..., 2] >= c[..., 0])
-    ys, xs = np.nonzero(mask)
+def bbox(rgba: np.ndarray, threshold: int = 24) -> tuple[int, int, int, int]:
+    ys, xs = np.nonzero(rgba[..., 3] > threshold)
     return int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1
 
 
-def best_shift(ref: np.ndarray, img: np.ndarray, rows: slice) -> tuple[int, int]:
-    """Small (dx, dy) that lines the shirt and shoulders of `img` up with `ref`."""
-    a = ref[rows, :, 3] > 128
-    best, score = (0, 0), -1
-    for dy in range(-8, 9):
-        for dx in range(-8, 9):
-            b = np.roll(np.roll(img[:, :, 3] > 128, dy, 0), dx, 1)[rows]
-            s = (a & b).sum() - (a ^ b).sum()
-            if s > score:
-                best, score = (dx, dy), s
-    return best
+def face_box(rgba: np.ndarray, top: float) -> dict[str, int]:
+    """Lower face (cheeks to chin) of a figure: the widest skin region lowest in its top part."""
+    c = rgba[..., :3].astype(int)
+    r, g, b = c[..., 0], c[..., 1], c[..., 2]
+    skin = (rgba[..., 3] > 200) & (r > 205) & (g > 150) & (g < 232) & (b > 110) & (b < 215) & (r - b > 25)
+    skin[int(rgba.shape[0] * top) :] = False
+    labels, count = ndimage.label(skin)
+    best, best_bottom = None, -1
+    for i, sl in enumerate(ndimage.find_objects(labels), start=1):
+        if sl is None:
+            continue
+        width = sl[1].stop - sl[1].start
+        if width > rgba.shape[1] * 0.3 and (labels[sl] == i).sum() > 1500 and sl[0].stop > best_bottom:
+            best, best_bottom = i, sl[0].stop
+    ys, xs = np.nonzero(labels == best)
+    cx = int(np.median(xs))
+    return {'x0': int(xs.min()), 'x1': int(xs.max()), 'cx': cx, 'chin': int(ys[xs == cx].max())}
 
 
-def place(canvas: Image.Image, rgba: np.ndarray, x: int, y: int) -> None:
+def scaled(rgba: np.ndarray, factor: float) -> np.ndarray:
     img = Image.fromarray(rgba, 'RGBA')
-    canvas.paste(img, (x, y), img)
+    return np.asarray(img.resize((round(img.width * factor), round(img.height * factor)), Image.LANCZOS))
+
+
+def swap_head(body: np.ndarray, cell: np.ndarray, width: int) -> np.ndarray:
+    """The body with its head replaced by the cell's (lower face `width` px wide), joined at the chin."""
+    bf = face_box(body, 0.5)
+    cf = face_box(cell, 0.9)
+    head = cell.copy()
+    # Drop the shirt collar, which only sits around the neck. The navy hair is bluish too,
+    # so the colour test must never reach above the chin.
+    rows = np.arange(head.shape[0])[:, None]
+    blue = head[..., 2].astype(int) > head[..., 0].astype(int) + 15
+    head[(blue & (rows > cf['chin'] - 8)) | (rows > cf['chin'] + 10), 3] = 0
+    factor = width / (cf['x1'] - cf['x0'])
+    head = scaled(head, factor)
+    x, y = round(bf['cx'] - cf['cx'] * factor), round(bf['chin'] - cf['chin'] * factor)
+    # Room above for a head bigger than the one it replaces.
+    pad = max(0, -y)
+    out = np.zeros((body.shape[0] + pad, body.shape[1], 4), np.uint8)
+    out[pad:] = body
+    out[: pad + bf['chin'] - 1, :, 3] = 0
+    layer = Image.new('RGBA', (out.shape[1], out.shape[0]))
+    img = Image.fromarray(head, 'RGBA')
+    layer.paste(img, (x, y + pad), img)
+    return np.asarray(Image.alpha_composite(Image.fromarray(out, 'RGBA'), layer))
+
+
+def main_figure(rgba: np.ndarray) -> np.ndarray:
+    """Keeps only the biggest figure in a crop, dropping slivers of its neighbours."""
+    mask = rgba[..., 3] > 24
+    labels, count = ndimage.label(ndimage.binary_dilation(mask, iterations=3))
+    keep = labels == np.argmax(np.bincount(labels.ravel())[1:]) + 1
+    out = rgba.copy()
+    out[~keep, 3] = 0
+    # White gaps enclosed below the head (between legs, under an arm) are background; eyes are never this low.
+    c = out[..., :3].astype(int)
+    gap = (out[..., 3] > 0) & (c.min(-1) > 225) & (c.max(-1) - c.min(-1) < 24)
+    gap[: int(out.shape[0] * 0.45)] = False
+    holes, _ = ndimage.label(gap)
+    sizes = np.bincount(holes.ravel())
+    hole = np.isin(holes, np.nonzero(sizes > 80)[0][1:])
+    out[ndimage.binary_dilation(hole, iterations=1), 3] = 0
+    return out
 
 
 def sprite_frames() -> dict[str, Image.Image]:
@@ -120,37 +176,60 @@ def sprite_frames() -> dict[str, Image.Image]:
         (x0, _), (y0, _) = CELL_X[i % 3], CELL_Y[i // 3]
         cells[name] = cut_white(sheet[y0 : y0 + CELL_H, x0 : x0 + CELL_W])
 
-    ox = (FRAME_W - CELL_W) // 2
-    frames = {}
-    neutral = cells['neutral']
-    for name, cell in cells.items():
-        dx, dy = best_shift(neutral, cell, slice(250, 325))
-        frame = Image.new('RGBA', (FRAME_W, FRAME_H))
-        place(frame, cell, ox + dx, dy)
-        frames[name] = frame
+    def figure(file: str, box: tuple[int, int, int, int]) -> np.ndarray:
+        x0, y0, x1, y1 = box
+        cut = main_figure(cut_white(load(file)[y0:y1, x0:x1]))
+        left, top, right, bottom = bbox(cut)
+        return cut[top:bottom, left:right]
 
-    # Wave: the first figure of the poses sheet, scaled and placed so its hair matches the neutral face.
-    figure = cut_white(load('poses.jpeg')[60:740, 0:430])
-    hx0, hy0, hx1, _ = hair_box(neutral, 180)
-    px0, py0, px1, _ = hair_box(figure, 260, 300)
-    scale = (hx1 - hx0) / (px1 - px0)
-    img = Image.fromarray(figure, 'RGBA')
-    img = img.resize((round(img.width * scale), round(img.height * scale)), Image.LANCZOS)
-    frame = Image.new('RGBA', (FRAME_W, FRAME_H))
-    x = round(ox + (hx0 + hx1) / 2 - (px0 + px1) / 2 * scale)
-    y = round(hy0 - py0 * scale)
-    frame.paste(img, (x, y), img)
-    frames['wave'] = frame
+    # Everything is scaled to the poses sheet, whose standing wave sets the size.
+    poses = {name: figure('poses.jpeg', box) for name, box in POSES.items()}
+    k = STANDING_HEIGHT / poses['wave'].shape[0]
+    poses = {name: scaled(f, k) for name, f in poses.items()}
+    wf = face_box(poses['wave'], 0.45)
+    head_width = wf['x1'] - wf['x0']
+    leg = poses['wave'].shape[0] - wf['chin']
+
+    # The turnaround body, scaled so chin to shoes matches the wave, then each expression's head.
+    body = figure(*FRONT)
+    bf = face_box(body, 0.5)
+    body = scaled(body, leg / (body.shape[0] - bf['chin']))
+    placed: dict[str, tuple[np.ndarray, tuple[int, int]]] = {}
+    for name, cell in cells.items():
+        f = swap_head(body, cell, head_width)
+        placed[name] = (f, (face_box(f, 0.5)['cx'], f.shape[0]))
+    # The pointing pose keeps its arm but gets the calm face instead of the nervous one.
+    point = swap_head(poses['point'], cells['neutral'], head_width)
+    placed['point'] = (point, (face_box(point, 0.5)['cx'], point.shape[0]))
+    placed['wave'] = (poses['wave'], (wf['cx'], poses['wave'].shape[0]))
+    # The jump keeps its face where the standing face is; the stage lifts it.
+    jf = face_box(poses['jump'], 0.5)
+    placed['jump'] = (poses['jump'], (jf['cx'], jf['chin'] + leg))
+
+    # Frame size: everything placed around one shared point (face centre, shoe line), plus a margin.
+    boxes = [(-ax, -ay, f.shape[1] - ax, f.shape[0] - ay) for f, (ax, ay) in placed.values()]
+    left = min(b[0] for b in boxes) - 4
+    top = min(b[1] for b in boxes) - 4
+    width = max(b[2] for b in boxes) + 4 - left
+    height = max(b[3] for b in boxes) + 2 - top
+    frames = {}
+    for name in [*EXPRESSIONS, 'wave', 'point', 'jump']:
+        f, (ax, ay) = placed[name]
+        frame = Image.new('RGBA', (width, height))
+        img = Image.fromarray(f, 'RGBA')
+        frame.paste(img, (-left - ax, -top - ay), img)
+        frames[name] = frame
     return frames
 
 
 def write_sprite(frames: dict[str, Image.Image]) -> tuple[list[str], int, int]:
-    w, h = round(FRAME_W * FRAME_SCALE), round(FRAME_H * FRAME_SCALE)
+    first = next(iter(frames.values()))
+    w, h = first.size
     names = list(frames)
     rows = -(-len(names) // SPRITE_COLUMNS)
     atlas = Image.new('RGBA', (w * SPRITE_COLUMNS, h * rows))
     for i, name in enumerate(names):
-        atlas.paste(frames[name].resize((w, h), Image.LANCZOS), ((i % SPRITE_COLUMNS) * w, (i // SPRITE_COLUMNS) * h))
+        atlas.paste(frames[name], ((i % SPRITE_COLUMNS) * w, (i // SPRITE_COLUMNS) * h))
     atlas.save(OUT / 'sprite.webp', 'WEBP', quality=86, method=6, exact=False)
     return names, w, h
 

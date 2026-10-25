@@ -61,7 +61,7 @@
 }
 
 .buddy--sprite.is-peeking:not(.is-up, :hover, :focus-within) :is(.buddy__hit, .buddy__zzz) {
-  translate: 0 40%;
+  translate: 0 64%;
 }
 
 .buddy.is-peeking:not(.is-up, :hover, :focus-within) .buddy__close {
@@ -82,16 +82,26 @@
   display: none;
 }
 
-/* Drawn 2D version: head and shoulders rising from the bottom edge of the screen. */
+/* Drawn 2D version: the whole standing figure, feet just above the bottom edge. */
 .buddy--sprite {
-  right: 40px;
-  bottom: 0;
-  width: 176px;
-  height: 132px;
+  right: 44px;
+  bottom: 8px;
+  width: 116px;
+  height: 192px;
 }
 
 .buddy--sprite .buddy__hit {
-  border-radius: 40% 40% 0 0;
+  border-radius: 45% 45% 30% 30%;
+}
+
+.buddy__shadow {
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  bottom: -3px;
+  height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.45), transparent);
 }
 
 .buddy__sprite {
@@ -110,8 +120,8 @@
 }
 
 .buddy--sprite .buddy__zzz {
-  top: 2%;
-  right: 20%;
+  top: 0;
+  right: 8%;
 }
 
 .buddy--sprite .buddy__close {
@@ -271,10 +281,10 @@
   }
 
   .buddy--sprite {
-    right: 4px;
-    bottom: 0;
-    width: 120px;
-    height: 90px;
+    right: 8px;
+    bottom: 6px;
+    width: 80px;
+    height: 132px;
   }
 
   .buddy--still {

@@ -12,6 +12,8 @@ export interface AvatarStage {
   setHover(on: boolean): void;
   setSleep(on: boolean): void;
   wave(seconds?: number): void;
+  /** Points down towards the page (the contact details). */
+  point(seconds?: number): void;
   hop(): void;
   talk(seconds: number): void;
   resize(): void;
