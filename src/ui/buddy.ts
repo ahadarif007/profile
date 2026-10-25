@@ -1,11 +1,21 @@
 import { gsap } from 'gsap';
 import { buddy as copy } from '../content/buddy';
-import type { BuddyStage } from '../gl/buddy';
+import type { AvatarStage } from './avatar-stage';
 
 const HIDDEN_KEY = 'buddy-hidden';
 const SLEEP_AFTER_MS = 25000;
 /** Anything readable; when one of these is behind the avatar, it ducks down. */
 const TEXT = 'p, a, li, h1, h2, h3, h4, figcaption, button, dt, dd, blockquote, .label';
+
+type Variant = 'model' | 'sprite';
+
+/** Each page load picks one of the two avatars at random. In development, ?avatar=2d or ?avatar=3d forces one. */
+const pickVariant = (): Variant => {
+  const forced = import.meta.env.DEV ? new URLSearchParams(window.location.search).get('avatar') : null;
+  if (forced === '2d') return 'sprite';
+  if (forced === '3d') return 'model';
+  return Math.random() < 0.5 ? 'sprite' : 'model';
+};
 
 const saveData = () => (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
 
@@ -26,10 +36,12 @@ const writeHidden = () => {
 };
 
 /**
- * The avatar in the corner. With motion it is a small 3D toon character
- * (Three.js, loaded after first paint) that looks at the pointer, blinks,
+ * The avatar in the corner. With motion it is, picked at random per page load,
+ * either a small 3D toon character (Three.js, loaded after first paint) or
+ * the drawn 2D one (buddy-sprite.ts). Either looks at the pointer, blinks,
  * leans when you scroll, waves when clicked and dozes off when left alone.
- * With reduced motion, Save-Data or no WebGL it is a still portrait that
+ * Without WebGL the 3D pick falls back to the 2D one. With reduced motion
+ * or Save-Data it is a still portrait that
  * still answers clicks. Without JavaScript it is not shown at all.
  */
 export function initBuddy(): void {
@@ -42,7 +54,7 @@ export function initBuddy(): void {
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
-  let stage: BuddyStage | null = null;
+  let stage: AvatarStage | null = null;
   let canvas: HTMLCanvasElement | null = null;
   let loading = false;
   let line = 0;
@@ -128,35 +140,52 @@ export function initBuddy(): void {
     show();
   };
 
-  const startLive = () => {
+  const chosen = pickVariant();
+
+  const startLive = (kind: Variant = chosen) => {
     if (stage || loading) return;
     loading = true;
-    import('../gl/buddy')
-      .then(({ BuddyStage }) => {
-        loading = false;
+    const sprite = kind === 'sprite';
+    const build: Promise<() => AvatarStage> = sprite
+      ? import('./buddy-sprite').then(({ SpriteStage }) => () => new SpriteStage(hit))
+      : import('../gl/buddy').then(({ BuddyStage }) => () => {
+          canvas = document.createElement('canvas');
+          canvas.className = 'buddy__canvas';
+          canvas.setAttribute('aria-hidden', 'true');
+          hit.prepend(canvas);
+          canvas.addEventListener('webglcontextlost', stopLive);
+          return new BuddyStage(canvas);
+        });
+    build
+      .then(async (create) => {
         if (reduce.matches || closed) return;
-        canvas = document.createElement('canvas');
-        canvas.className = 'buddy__canvas';
-        canvas.setAttribute('aria-hidden', 'true');
-        hit.prepend(canvas);
         el.classList.remove('buddy--still');
-        // Unhidden (still transparent) first, so the stage can measure the canvas.
+        el.classList.toggle('buddy--sprite', sprite);
+        // Unhidden (still invisible) first, so the stage can measure itself.
         el.hidden = false;
+        let next: AvatarStage;
         try {
-          stage = new BuddyStage(canvas);
+          next = create();
         } catch {
-          canvas.remove();
+          // No WebGL: the drawn avatar needs none.
+          canvas?.remove();
           canvas = null;
-          startStill();
+          if (sprite) startStill();
+          else window.setTimeout(() => startLive('sprite'));
           return;
         }
-        canvas.addEventListener('webglcontextlost', stopLive);
-        gsap.ticker.add(stage.frame);
+        await next.ready;
+        if (reduce.matches || closed) {
+          next.dispose();
+          return;
+        }
+        stage = next;
+        gsap.ticker.add(next.frame);
         show();
       })
-      .catch(() => {
+      .catch(() => startStill())
+      .finally(() => {
         loading = false;
-        startStill();
       });
   };
 
@@ -280,7 +309,7 @@ export function initBuddy(): void {
     return;
   }
   // After the boot sequence and the first paint, so it never competes with the hero.
-  const later = () => window.setTimeout(startLive, 1800);
+  const later = () => window.setTimeout(() => startLive(), 1800);
   if (document.readyState === 'complete') later();
   else window.addEventListener('load', later, { once: true });
 }
