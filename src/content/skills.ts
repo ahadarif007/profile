@@ -19,13 +19,13 @@ export const skillGroups: SkillGroup[] = [
   },
   {
     id: 'data',
-    name: 'Databases',
-    items: ['PostgreSQL', 'Oracle', 'MySQL', 'MongoDB', 'Redis', 'Elasticsearch'],
+    name: 'Databases and search',
+    items: ['PostgreSQL', 'Oracle Database', 'MySQL', 'MongoDB', 'Redis', 'Elasticsearch'],
   },
   {
     id: 'ml',
-    name: 'Machine learning',
-    items: ['PyTorch', 'TensorFlow', 'scikit-learn', 'OpenCV', 'NumPy', 'pandas', 'Jupyter'],
+    name: 'Machine learning and data analysis',
+    items: ['PyTorch', 'TensorFlow', 'scikit-learn', 'OpenCV', 'NumPy', 'pandas', 'Jupyter Notebook'],
   },
   {
     id: 'infra',
@@ -44,7 +44,7 @@ export const skillEvidence: Record<string, string[]> = {
   TensorFlow: ['Tomato leaf disease paper (ICCIT 2023)'],
   'scikit-learn': ['Tomato leaf disease paper (ICCIT 2023)'],
   NumPy: ['Tomato leaf disease paper (ICCIT 2023)'],
-  Jupyter: ['Tomato leaf disease paper (ICCIT 2023)'],
+  'Jupyter Notebook': ['Tomato leaf disease paper (ICCIT 2023)'],
 };
 
 /** Skill names matched against the patterns listed on each project. */

@@ -15,6 +15,7 @@ export const featuredPaper: FeaturedPaper = {
   summary: [
     'A VGG16 model with spatial and channel attention (VGG16 SCA) for classifying tomato leaves into 10 classes, trained with nine image augmentation techniques.',
     'The model reached 99.04% accuracy under the paper’s evaluation protocol. I am the third of five authors.',
+    'Built and analysed with TensorFlow, scikit-learn, NumPy and Jupyter Notebook.',
   ],
   facts: [
     { value: '99.04%', label: 'reported accuracy' },
@@ -35,8 +36,8 @@ export const publications: Publication[] = [
       },
     ],
     summary: [
-      'Compared how MANET routing protocols hold up against black hole attacks, then proposed a way to detect and counter them.',
-      'The method finds malicious nodes through targeted packet generation and broadcast, and combines this with existing defences in a hybrid approach.',
+      'Investigated security issues in mobile ad hoc networks, focusing on black hole attacks, and tested how different routing protocols are affected.',
+      'Proposed a hybrid method that identifies and isolates malicious nodes through packet generation and network broadcasting, combined with existing defences.',
     ],
   },
   {
@@ -49,7 +50,7 @@ export const publications: Publication[] = [
       },
     ],
     summary: [
-      'Proposed an NFC smart-card framework that uses a blockchain for identity and access, so one card could replace several.',
+      'Proposed a blockchain-based access-control framework using NFC smart cards, so one card could stand in for several.',
       'Based on a review of cryptographic protocols and distributed-ledger designs.',
     ],
   },

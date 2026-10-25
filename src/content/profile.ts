@@ -44,15 +44,15 @@ export const education: Education[] = [
     institution: 'American International University-Bangladesh',
     place: 'Dhaka, Bangladesh',
     period: 'Graduated Jul 2020',
-    result: 'CGPA 3.45 / 4.00',
+    result: 'CGPA 3.45/4.00',
   },
 ];
 
 // Only items that can be backed up; add a year and issuer to each when you have them.
 export const recognition: string[] = [
-  'Contributed to BRAC IT’s first successful CMMI implementation for its software development process',
-  'Led the development and delivery of five ERP modules',
-  'Intel Edge AI Scholarship, Udacity',
-  'Second place, AIUB project showcase',
-  'More than 500 algorithmic problems solved on online judges',
+  'Led the development and delivery of five enterprise resource planning (ERP) modules',
+  'Contributed to BRAC IT’s first successful CMMI implementation',
+  'Intel Edge AI Scholarship, delivered through Udacity',
+  'Took part twice in the AIUB student project showcase and placed second once',
+  'Solved more than 500 programming problems across several online judges',
 ];
